@@ -11,7 +11,7 @@ import "time"
 type Recipient struct {
 	RecipientNo              string                 `json:"recipientNo" validate:"max=50"`
 	CountryCode              string                 `json:"countryCode" validate:"max=8"`
-	InternationalRecipientNo string                 `json:"internationalRecipientNo" validate:"e164,max=20"`
+	InternationalRecipientNo string                 `json:"internationalRecipientNo,omitempty" validate:"max=20"`
 	TemplateParameter        map[string]interface{} `json:"templateParameter,omitempty" validate:"omitempty,max=20"`
 	RecipientGroupingKey     string                 `json:"recipientGroupingKey,omitempty" validate:"max=100"`
 }
