@@ -32,3 +32,23 @@ type TextMessage struct {
 	UserId            string      `json:"userId" validate:"max=100"`
 	StatsId           string      `json:"statsId" validate:"max=10"`
 }
+
+type ResultQuery struct {
+	RequestId            string              `json:"requestId"`
+	StartRequestDate     string              `json:"startRequestDate"`
+	EndRequestDate       string              `json:"endRequestDate"`
+	StartCreateDate      string              `json:"startCreateDate"`
+	EndCreateDate        string              `json:"endCreateDate"`
+	StartResultDate      string              `json:"startResultDate"`
+	EndResultDate        string              `json:"endResultDate"`
+	SendNo               string              `json:"sendNo"`
+	RecipientNo          string              `json:"recipientNo"`
+	TemplateId           string              `json:"templateId"`
+	MsgStatus            MessageStatus       `json:"msgStatus"`
+	ResultCode           ReceiveResult       `json:"resultCode"`
+	SubResultCode        ReceiveResultDetail `json:"subResultCode"`
+	SenderGroupingKey    string              `json:"senderGroupingKey"`
+	RecipientGroupingKey string              `json:"recipientGroupingKey"`
+	PageNum              uint                `json:"pageNum"`
+	PageSize             uint16              `json:"pageSize"`
+}
