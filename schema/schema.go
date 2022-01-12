@@ -28,7 +28,7 @@ type TextMessage struct {
 	TemplateId        string      `json:"templateId" validate:"max=50,required_without=Body"`
 	Body              string      `json:"body" validate:"max=255,required_without=TemplateId"`
 	SendNo            string      `json:"sendNo" validate:"max=13,required"`
-	RequestDate       time.Time   `json:"requestDate" validate:"datetime=2006-01-02 15:04"`
+	RequestDate       time.Time   `json:"requestDate" validate:"omitempty,datetime=2006-01-02 15:04"`
 	SenderGroupingKey string      `json:"senderGroupingKey" validate:"max=100"`
 	RecipientList     []Recipient `json:"recipientList" validate:"max=1000,required"`
 	UserId            string      `json:"userId" validate:"max=100"`
