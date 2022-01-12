@@ -25,12 +25,12 @@ type Recipient struct {
 // UserId는 발송구분자이다.
 // Stats Id는 통계 ID로 검색 조건에는 포함되지 않는다.
 type TextMessage struct {
-	TemplateId        string      `json:"templateId" validate:"max=50"`
-	Body              string      `json:"body" validate:"max=255"`
-	SendNo            string      `json:"sendNo" validate:"required,max=13"`
+	TemplateId        string      `json:"templateId" validate:"max=50,required_without=Body"`
+	Body              string      `json:"body" validate:"max=255,required_without=TemplateId"`
+	SendNo            string      `json:"sendNo" validate:"max=13,required"`
 	RequestDate       time.Time   `json:"requestDate" validate:"datetime=2006-01-02 15:04"`
 	SenderGroupingKey string      `json:"senderGroupingKey" validate:"max=100"`
-	RecipientList     []Recipient `json:"recipientList" validate:"required,max=1000"`
+	RecipientList     []Recipient `json:"recipientList" validate:"max=1000,required"`
 	UserId            string      `json:"userId" validate:"max=100"`
 	StatsId           string      `json:"statsId" validate:"max=10"`
 }
