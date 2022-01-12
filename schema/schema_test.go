@@ -96,4 +96,28 @@ func TestTextMessageSchema(t *testing.T) {
 		err = validate.Struct(textMessage)
 		assert.Nil(t, err)
 	})
+
+	t.Run("RecipientList는 아이템이 1,000개가 넘을 경우 Validation에 실패한다", func(t *testing.T) {
+
+		recipientList := []Recipient{}
+
+		for i := 0; i < 1001; i++ {
+			recipientList = append(recipientList, recipient)
+		}
+
+		textMessage := TextMessage{
+			TemplateId:    "TEST01",
+			RecipientList: recipientList,
+			RequestDate:   "2022-01-01 00:00",
+			SendNo:        "0700000000",
+		}
+
+		errs := validate.Struct(textMessage)
+		ve := errs.(validator.ValidationErrors)
+		assert.Equal(t, len(ve), 1)
+
+		for _, err := range ve {
+			assert.Equal(t, err.Field(), "RecipientList")
+		}
+	})
 }
