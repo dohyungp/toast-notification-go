@@ -24,4 +24,31 @@ func TestRecipientSchema(t *testing.T) {
 		// error가 없어야 한다
 		assert.Nil(t, err)
 	})
+
+	t.Run("Recipient 대신 InternationalRecipientNo를 사용해도 Validation에 성공해야 한다", func(t *testing.T) {
+		recipient := Recipient{
+			InternationalRecipientNo: "8201000000000",
+			TemplateParameter: map[string]interface{}{
+				"hello": "hi",
+			},
+			RecipientGroupingKey: "RECIPIENT_GROUP",
+		}
+		err := validate.Struct(recipient)
+		// error가 없어야 한다
+		assert.Nil(t, err)
+	})
+
+	t.Run("RecipientNo가 없는 경우 InternationalRecipientNo는 필수이다", func(t *testing.T) {
+		recipient := Recipient{
+			TemplateParameter: map[string]interface{}{
+				"hello": "hi",
+			},
+			RecipientGroupingKey: "RECIPIENT_GROUP",
+		}
+		err := validate.Struct(recipient)
+		assert.Error(t, err)
+
+		ve := err.(validator.ValidationErrors)
+		assert.Equal(t, len(ve), 2)
+	})
 }
