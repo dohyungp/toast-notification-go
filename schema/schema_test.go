@@ -57,19 +57,15 @@ func TestRecipientSchema(t *testing.T) {
 // TextMessage 스키마를 테스트한다.
 func TestTextMessageSchema(t *testing.T) {
 	validate := validator.New()
-	t.Run("TextMessage 객체를 규칙에 맞게 생성했을 때 Validation에 성공해야 한다", func(t *testing.T) {
-		// recipient 객체를 생성한다.
-		recipient := Recipient{
-			RecipientNo: "01000000000",
-			TemplateParameter: map[string]interface{}{
-				"hello": "hi",
-			},
-			RecipientGroupingKey: "RECIPIENT_GROUP",
-		}
-		rerr := validate.Struct(recipient)
-		// error가 없어야 한다
-		assert.Nil(t, rerr)
+	// 공용으로 사용할 recipient 객체를 생성한다.
+	recipient := Recipient{
+		RecipientNo: "01000000000",
+		TemplateParameter: map[string]interface{}{
+			"hello": "hi",
+		},
+	}
 
+	t.Run("TextMessage 객체를 규칙에 맞게 생성했을 때 Validation에 성공해야 한다", func(t *testing.T) {
 		textMessage := TextMessage{
 			TemplateId:    "TEST01",
 			RecipientList: []Recipient{recipient},
@@ -77,5 +73,27 @@ func TestTextMessageSchema(t *testing.T) {
 		}
 		terr := validate.Struct(textMessage)
 		assert.Nil(t, terr)
+	})
+
+	t.Run("Request Date는 yyyy-mm-dd HH:MM 형식에 맞지 않으면 Validation 실패한다", func(t *testing.T) {
+		textMessage := TextMessage{
+			TemplateId:    "TEST01",
+			RecipientList: []Recipient{recipient},
+			RequestDate:   "2022-01-01T00:00",
+			SendNo:        "0700000000",
+		}
+		err := validate.Struct(textMessage)
+		ve := err.(validator.ValidationErrors)
+		assert.Equal(t, len(ve), 1)
+
+		textMessage = TextMessage{
+			TemplateId:    "TEST01",
+			RecipientList: []Recipient{recipient},
+			RequestDate:   "2022-01-01 00:00",
+			SendNo:        "0700000000",
+		}
+
+		err = validate.Struct(textMessage)
+		assert.Nil(t, err)
 	})
 }
