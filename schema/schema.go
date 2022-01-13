@@ -34,21 +34,21 @@ type TextMessage struct {
 }
 
 type ResultQuery struct {
-	RequestId            string              `json:"requestId"`
-	StartRequestDate     string              `json:"startRequestDate"`
-	EndRequestDate       string              `json:"endRequestDate"`
-	StartCreateDate      string              `json:"startCreateDate"`
-	EndCreateDate        string              `json:"endCreateDate"`
-	StartResultDate      string              `json:"startResultDate"`
-	EndResultDate        string              `json:"endResultDate"`
-	SendNo               string              `json:"sendNo"`
-	RecipientNo          string              `json:"recipientNo"`
-	TemplateId           string              `json:"templateId"`
-	MsgStatus            MessageStatus       `json:"msgStatus"`
-	ResultCode           ReceiveResult       `json:"resultCode"`
-	SubResultCode        ReceiveResultDetail `json:"subResultCode"`
-	SenderGroupingKey    string              `json:"senderGroupingKey"`
-	RecipientGroupingKey string              `json:"recipientGroupingKey"`
-	PageNum              uint                `json:"pageNum"`
-	PageSize             uint16              `json:"pageSize"`
+	RequestId            string              `json:"requestId" validate:"max=25,required_without_all=StartRequestDate StartCreateDate"`
+	StartRequestDate     string              `json:"startRequestDate" validate:"required_without_all=RequestId StartCreateDate,required_with=EndRequestDate,omitempty,datetime=2006-01-02 15:04:05"`
+	EndRequestDate       string              `json:"endRequestDate" validate:"required_without_all=RequestId StartCreateDate,required_with=StartRequestDate,omitempty,datetime=2006-01-02 15:04:05"`
+	StartCreateDate      string              `json:"startCreateDate" validate:"required_without_all=RequestId StartRequestDate,required_with=EndCreateDate,omitempty,datetime=2006-01-02 15:04:05"`
+	EndCreateDate        string              `json:"endCreateDate" validate:"required_without_all=RequestId StartRequestDate,required_with=StartCreateDate,omitempty,datetime=2006-01-02 15:04:05"`
+	StartResultDate      string              `json:"startResultDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
+	EndResultDate        string              `json:"endResultDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
+	SendNo               string              `json:"sendNo" validate:"max=13"`
+	RecipientNo          string              `json:"recipientNo" validate:"max=20"`
+	TemplateId           string              `json:"templateId" validate:"max=50"`
+	MsgStatus            MessageStatus       `json:"msgStatus" validate:"omitempty,oneof=0 1 2 3 4 5"`
+	ResultCode           ReceiveResult       `json:"resultCode" validate:"omitempty,oneof=MTR1 MTR2"`
+	SubResultCode        ReceiveResultDetail `json:"subResultCode" validate:"omitempty,oneof=MTR2_1 MTR2_2 MTR2_3"`
+	SenderGroupingKey    string              `json:"senderGroupingKey" validate:"max=100"`
+	RecipientGroupingKey string              `json:"recipientGroupingKey" validate:"max=100"`
+	PageNum              uint                `json:"pageNum" validate:"omitempty,min=1"`
+	PageSize             uint16              `json:"pageSize" validate:"omitempty,min=1,max=1000"`
 }

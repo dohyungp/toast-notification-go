@@ -121,3 +121,59 @@ func TestTextMessageSchema(t *testing.T) {
 		}
 	})
 }
+
+func TestResultQuerySchema(t *testing.T) {
+	validate := validator.New()
+
+	t.Run("RequestId 또는 StartRequestDate + EndRequestDate 또는 StartCreateDate + EndCreateDate는 필수이다", func(t *testing.T) {
+		// Request Id로 요청 가능하다
+		resultQuery := ResultQuery{
+			RequestId: "ABCD",
+		}
+		err := validate.Struct(resultQuery)
+		assert.Nil(t, err)
+
+		// StartCreateDate, EndCreateDate로 요청가능하다
+		resultQuery = ResultQuery{
+			StartCreateDate: "2022-01-01 00:00:00",
+			EndCreateDate:   "2022-01-01 01:00:00",
+		}
+		err = validate.Struct(resultQuery)
+		assert.Nil(t, err)
+
+		// StartRequestDate, EndRequestDate로 요청가능하다
+		resultQuery = ResultQuery{
+			StartRequestDate: "2022-01-01 00:00:00",
+			EndRequestDate:   "2022-01-01 01:00:00",
+		}
+		err = validate.Struct(resultQuery)
+		assert.Nil(t, err)
+
+		// 빈값은 에러가 발생해야 한다.
+		resultQuery = ResultQuery{}
+		err = validate.Struct(resultQuery)
+		assert.NotNil(t, err)
+
+		// 요청 시작일만 있으면 오류가 난다.
+		resultQuery = ResultQuery{
+			StartRequestDate: "2022-01-01 00:00:00",
+		}
+		errs := validate.Struct(resultQuery)
+		assert.NotNil(t, errs)
+		ve := errs.(validator.ValidationErrors)
+		for _, err := range ve {
+			assert.Equal(t, err.Field(), "EndRequestDate")
+		}
+
+		// 생성 시작일만 있으면 오류가 난다.
+		resultQuery = ResultQuery{
+			StartCreateDate: "2022-01-01 00:00:00",
+		}
+		errs = validate.Struct(resultQuery)
+		assert.NotNil(t, errs)
+		ve = errs.(validator.ValidationErrors)
+		for _, err := range ve {
+			assert.Equal(t, err.Field(), "EndCreateDate")
+		}
+	})
+}
