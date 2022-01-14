@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -62,9 +63,15 @@ func (t ToastClient) SendMessage(message schema.TextMessage) {
 	msgJson, _ := json.Marshal(message)
 	msgBuffer := bytes.NewBuffer(msgJson)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
-	req, _ := t.prepareRequest("POST", url, msgBuffer)
-	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
-	resp, _ := t.Client.Do(req)
-	// FIXME: Response를 처리하는 로직이 필요하다.
-	resp.Body.Close()
+	req, err := t.prepareRequest("POST", url, msgBuffer)
+	if err != nil {
+		log.Fatalf("err: %v\n", err)
+	}
+	resp, err := t.Client.Do(req)
+	if err != nil {
+		log.Fatalf("err: %v\n", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Print(body)
 }
