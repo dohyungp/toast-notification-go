@@ -37,25 +37,14 @@ func (t ToastClient) Validate(schema interface{}) {
 }
 
 // Toast로 SMS 메시지를 보낸다
-// FIXME: Optional Argument를 포함하도록 인자를 추가한다.
-func (t ToastClient) SendMessage() {
+func (t ToastClient) SendMessage(message schema.TextMessage) {
 	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/sms", DOMAIN, API_VERSION, t.AppKey)
-	msgSchema := schema.TextMessage{
-		TemplateId:        "",
-		Body:              "",
-		SendNo:            "",
-		RequestDate:       "",
-		SenderGroupingKey: "",
-		RecipientList:     []schema.Recipient{},
-		UserId:            "",
-		StatsId:           "",
-	}
-	t.Validate(msgSchema)
+	t.Validate(message)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
-	msgJson, _ := json.Marshal(msgSchema)
-	msg := bytes.NewBuffer(msgJson)
+	msgJson, _ := json.Marshal(message)
+	msgBuffer := bytes.NewBuffer(msgJson)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
-	resp, _ := http.Post(url, "application/json", msg)
+	resp, _ := http.Post(url, "application/json", msgBuffer)
 	// FIXME: Response를 처리하는 로직이 필요하다.
 	resp.Body.Close()
 }
