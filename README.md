@@ -6,17 +6,16 @@
 package main
 
 import (
-    toast "github.com/dohyungp/toast-notification-go"
-    "github.com/dohyungp/toast-notification-go/schema"
+    "github.com/dohyungp/toast-notification-go/sms"
 )
 
 func main() {
-	client := toast.NewToastClient("<APP_KEY>", "<API_SECRET>")
-	recipient := schema.Recipient{RecipientNo: "01000000000"}
-	message := schema.TextMessage{
+	client := sms.NewToastClient("<APP_KEY>", "<API_SECRET>")
+	recipient := sms.Recipient{RecipientNo: "01000000000"}
+	message := sms.TextMessage{
 		Body:          "Hello, Toast",
 		SendNo:        "0700000000",
-		RecipientList: []schema.Recipient{recipient},
+		RecipientList: []sms.Recipient{recipient},
 	}
 	client.SendMessage(message)
 }
