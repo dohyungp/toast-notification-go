@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -18,6 +19,7 @@ type ToastClient struct {
 	AppKey    string
 	ApiSecret string
 	Validator *validator.Validate
+	Client    *http.Client
 }
 
 // ToastClient를 생성한다.
@@ -26,7 +28,23 @@ func NewToastClient(AppKey string, ApiSecret string) *ToastClient {
 		AppKey:    AppKey,
 		ApiSecret: ApiSecret,
 		Validator: validator.New(),
+		Client:    &http.Client{},
 	}
+}
+
+// Toast 요청 포맷에 맞게 Request를 준비한다.
+func (t ToastClient) prepareRequest(method string, url string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header = http.Header{
+		"Content-Type": []string{"application/json"},
+		"X-Secret-Key": []string{t.ApiSecret},
+	}
+
+	return req, nil
 }
 
 func (t ToastClient) Validate(schema interface{}) {
@@ -44,7 +62,9 @@ func (t ToastClient) SendMessage(message schema.TextMessage) {
 	msgJson, _ := json.Marshal(message)
 	msgBuffer := bytes.NewBuffer(msgJson)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
-	resp, _ := http.Post(url, "application/json", msgBuffer)
+	req, _ := t.prepareRequest("POST", url, msgBuffer)
+	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
+	resp, _ := t.Client.Do(req)
 	// FIXME: Response를 처리하는 로직이 필요하다.
 	resp.Body.Close()
 }
