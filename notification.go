@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/dohyungp/toast-notification-go/schema"
 	"github.com/go-playground/validator/v10"
@@ -23,13 +24,30 @@ type ToastClient struct {
 	Client    *http.Client
 }
 
+type Config struct {
+	TimoutSecond uint
+}
+
 // ToastClient를 생성한다.
-func NewToastClient(AppKey string, ApiSecret string) *ToastClient {
+func NewToastClient(AppKey string, ApiSecret string, config ...*Config) *ToastClient {
+
+	timeoutSecond := 10 * time.Second
+
+	for _, c := range config {
+		if c.TimoutSecond != 0 {
+			timeoutSecond = time.Duration(c.TimoutSecond) * time.Second
+		}
+		// NOTE: 최초 건에 대해서만 적용하도록 break 처리한다.
+		break
+	}
+
 	return &ToastClient{
 		AppKey:    AppKey,
 		ApiSecret: ApiSecret,
 		Validator: validator.New(),
-		Client:    &http.Client{},
+		Client: &http.Client{
+			Timeout: timeoutSecond,
+		},
 	}
 }
 
