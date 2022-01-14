@@ -15,39 +15,57 @@ import (
 )
 
 const DOMAIN = "https://api-sms.cloud.toast.com"
-const API_VERSION = "v3.0"
+const DEFAULT_API_VERSION = "v3.0"
+const DEFAULT_TIMEOUT = 10 * time.Second
+const DEFAULT_MAX_CONNCURRENCY = 10
 
 type ToastClient struct {
-	AppKey    string
-	ApiSecret string
-	Validator *validator.Validate
-	Client    *http.Client
+	AppKey        string
+	ApiSecret     string
+	ApiVersion    string
+	MaxConcurreny int
+	Validator     *validator.Validate
+	Client        *http.Client
 }
 
-type Config struct {
-	TimoutSecond uint
+type ExtraConfig struct {
+	TimoutSecond  uint
+	MaxConcurreny int
+	ApiVersion    string
 }
 
 // ToastClient를 생성한다.
-func NewToastClient(AppKey string, ApiSecret string, config ...*Config) *ToastClient {
+func NewToastClient(AppKey string, ApiSecret string, extras ...*ExtraConfig) *ToastClient {
 
-	timeoutSecond := 10 * time.Second
+	timeoutSecond := DEFAULT_TIMEOUT
+	maxConcurrency := DEFAULT_MAX_CONNCURRENCY
+	apiVersion := DEFAULT_API_VERSION
 
-	for _, c := range config {
+	for _, c := range extras {
 		if c.TimoutSecond != 0 {
 			timeoutSecond = time.Duration(c.TimoutSecond) * time.Second
+		}
+
+		if c.MaxConcurreny != 0 {
+			maxConcurrency = c.MaxConcurreny
+		}
+
+		if c.ApiVersion != "" {
+			apiVersion = c.ApiVersion
 		}
 		// NOTE: 최초 건에 대해서만 적용하도록 break 처리한다.
 		break
 	}
 
 	return &ToastClient{
-		AppKey:    AppKey,
-		ApiSecret: ApiSecret,
-		Validator: validator.New(),
+		AppKey:     AppKey,
+		ApiSecret:  ApiSecret,
+		ApiVersion: apiVersion,
+		Validator:  validator.New(),
 		Client: &http.Client{
 			Timeout: timeoutSecond,
 		},
+		MaxConcurreny: maxConcurrency,
 	}
 }
 
@@ -75,7 +93,7 @@ func (t ToastClient) Validate(schema interface{}) {
 
 // Toast로 SMS 메시지를 보낸다
 func (t ToastClient) SendMessage(message schema.TextMessage) {
-	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/sms", DOMAIN, API_VERSION, t.AppKey)
+	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/sms", DOMAIN, t.ApiVersion, t.AppKey)
 	t.Validate(message)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
 	msgJson, _ := json.Marshal(message)
