@@ -1,4 +1,4 @@
-package schema
+package sms
 
 // Toast SMS API 수신인이다
 // RecipientNo는 전화번호이며 필수이다

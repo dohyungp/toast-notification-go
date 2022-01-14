@@ -1,4 +1,4 @@
-package schema
+package sms
 
 // 메시지 상태 코드
 type MessageStatus string

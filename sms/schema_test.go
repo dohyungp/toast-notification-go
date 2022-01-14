@@ -1,4 +1,4 @@
-package schema
+package sms
 
 import (
 	"testing"

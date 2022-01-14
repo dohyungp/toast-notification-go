@@ -1,4 +1,4 @@
-package main
+package sms
 
 import (
 	"bytes"
@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dohyungp/toast-notification-go/schema"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -91,7 +90,7 @@ func (t ToastClient) Validate(schema interface{}) {
 }
 
 // Toast로 SMS 메시지를 보낸다
-func (t ToastClient) SendMessage(message schema.TextMessage) {
+func (t ToastClient) SendMessage(message TextMessage) {
 	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/sms", DOMAIN, t.ApiVersion, t.AppKey)
 	t.Validate(message)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
