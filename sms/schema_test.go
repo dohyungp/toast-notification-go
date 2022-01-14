@@ -67,6 +67,7 @@ func TestTextMessageSchema(t *testing.T) {
 
 	t.Run("TextMessage 객체를 규칙에 맞게 생성했을 때 Validation에 성공해야 한다", func(t *testing.T) {
 		textMessage := TextMessage{
+			Type:          "sms",
 			TemplateId:    "TEST01",
 			RecipientList: []Recipient{recipient},
 			SendNo:        "0700000000",
@@ -77,6 +78,7 @@ func TestTextMessageSchema(t *testing.T) {
 
 	t.Run("Request Date는 yyyy-mm-dd HH:MM 형식에 맞지 않으면 Validation 실패한다", func(t *testing.T) {
 		textMessage := TextMessage{
+			Type:          "sms",
 			TemplateId:    "TEST01",
 			RecipientList: []Recipient{recipient},
 			RequestDate:   "2022-01-01T00:00",
@@ -87,6 +89,7 @@ func TestTextMessageSchema(t *testing.T) {
 		assert.Equal(t, len(ve), 1)
 
 		textMessage = TextMessage{
+			Type:          "sms",
 			TemplateId:    "TEST01",
 			RecipientList: []Recipient{recipient},
 			RequestDate:   "2022-01-01 00:00",
@@ -106,6 +109,7 @@ func TestTextMessageSchema(t *testing.T) {
 		}
 
 		textMessage := TextMessage{
+			Type:          "sms",
 			TemplateId:    "TEST01",
 			RecipientList: recipientList,
 			RequestDate:   "2022-01-01 00:00",

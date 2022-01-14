@@ -91,8 +91,8 @@ func (t ToastClient) Validate(schema interface{}) {
 
 // Toast로 SMS 메시지를 보낸다
 func (t ToastClient) SendMessage(message TextMessage) {
-	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/sms", DOMAIN, t.ApiVersion, t.AppKey)
 	t.Validate(message)
+	url := fmt.Sprintf("%s/sms/%s/appKeys/%s/sender/%s", DOMAIN, t.ApiVersion, t.AppKey, message.Type)
 	// FIXME: _를 에러 핸들링처리하도록 로직 변경이 필요하다.
 	msgJson, _ := json.Marshal(message)
 	msgBuffer := bytes.NewBuffer(msgJson)

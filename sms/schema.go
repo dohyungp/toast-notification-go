@@ -22,8 +22,11 @@ type Recipient struct {
 // RecipientList는 수신자 리스트이며 최대 1,000명까지 가능하다.
 // UserId는 발송구분자이다.
 // Stats Id는 통계 ID로 검색 조건에는 포함되지 않는다.
+// FIXME: Title은 MMS에서 적용되므로 별도의 required 조건이 추가되야 한다.
 type TextMessage struct {
+	Type              string      `json:"-" validate:"required,oneof=sms mms"`
 	TemplateId        string      `json:"templateId" validate:"max=50,required_without=Body"`
+	Title             string      `json:"title" validate:"max=120"`
 	Body              string      `json:"body" validate:"max=255,required_without=TemplateId"`
 	SendNo            string      `json:"sendNo" validate:"max=13,required"`
 	RequestDate       string      `json:"requestDate" validate:"omitempty,datetime=2006-01-02 15:04"`
