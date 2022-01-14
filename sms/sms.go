@@ -74,7 +74,7 @@ func (t ToastClient) prepareRequest(method string, url string, body io.Reader) (
 	}
 
 	req.Header = http.Header{
-		"Content-Type": []string{"application/json"},
+		"Content-Type": []string{"application/json;charset=UTF-8"},
 		"X-Secret-Key": []string{t.ApiSecret},
 	}
 
