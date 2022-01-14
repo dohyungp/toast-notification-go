@@ -33,6 +33,31 @@ type TextMessage struct {
 	StatsId           string      `json:"statsId" validate:"max=10"`
 }
 
+// 메시지 발송의 Response Body이다.
+// Response이므로 별도의 validation은 하지 않는다.
+type SendResponse struct {
+	Header struct {
+		IsSuccessFul  bool   `json:"isSuccessful"`
+		ResultCode    int    `json:"resultCode"`
+		ResultMessage string `json:"resultMessage"`
+	} `json:"header"`
+	Body struct {
+		Data struct {
+			RequestId         string `json:"requestId"`
+			StatusCode        string `json:"statusCode"`
+			SenderGroupingKey string `json:"senderGroupingKey"`
+			SendResultList    []struct {
+				RecipientNo          string `json:"recipientNo"`
+				ResultCode           int    `json:"resultCode"`
+				ResultMessage        string `json:"resultMessage"`
+				RecipientSeq         int    `json:"recipientSeq"`
+				RecipientGroupingKey string `json:"recipientGroupingKey"`
+			} `json:"sendResultList"`
+		}
+	} `json:"body"`
+}
+
+// 결과 조회를 위한 Request Body이다.
 type ResultQuery struct {
 	RequestId            string              `json:"requestId" validate:"max=25,required_without_all=StartRequestDate StartCreateDate"`
 	StartRequestDate     string              `json:"startRequestDate" validate:"required_without_all=RequestId StartCreateDate,required_with=EndRequestDate,omitempty,datetime=2006-01-02 15:04:05"`

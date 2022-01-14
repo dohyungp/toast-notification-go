@@ -110,5 +110,10 @@ func (t ToastClient) SendMessage(message TextMessage) {
 	if err != nil {
 		log.Fatalf("err: %v\n", err)
 	}
-	fmt.Print(body)
+	var sendResult SendResponse
+	err = json.Unmarshal(body, &sendResult)
+	if err != nil {
+		log.Fatalf("err: %v\n", err)
+	}
+	fmt.Printf("Results: %v\n", sendResult)
 }
