@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -41,7 +40,8 @@ func NewToastClient(AppKey string, ApiSecret string, extras ...*ExtraConfig) *To
 	maxConcurrency := DEFAULT_MAX_CONNCURRENCY
 	apiVersion := DEFAULT_API_VERSION
 
-	for _, c := range extras {
+	if len(extras) != 0 {
+		c := extras[0]
 		if c.TimoutSecond != 0 {
 			timeoutSecond = time.Duration(c.TimoutSecond) * time.Second
 		}
@@ -53,8 +53,6 @@ func NewToastClient(AppKey string, ApiSecret string, extras ...*ExtraConfig) *To
 		if c.ApiVersion != "" {
 			apiVersion = c.ApiVersion
 		}
-		// NOTE: 최초 건에 대해서만 적용하도록 break 처리한다.
-		break
 	}
 
 	return &ToastClient{
@@ -84,6 +82,7 @@ func (t ToastClient) prepareRequest(method string, url string, body io.Reader) (
 	return req, nil
 }
 
+// 코드를 Validation한다.
 func (t ToastClient) Validate(schema interface{}) {
 	err := t.Validator.Struct(schema)
 	if err != nil {
@@ -108,6 +107,9 @@ func (t ToastClient) SendMessage(message schema.TextMessage) {
 		log.Fatalf("err: %v\n", err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("err: %v\n", err)
+	}
 	fmt.Print(body)
 }
