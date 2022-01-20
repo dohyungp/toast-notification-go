@@ -10,7 +10,7 @@ import (
 // Recipient 스키마를 테스트한다.
 func TestRecipientSchema(t *testing.T) {
 	// 새로운 Validator를 생성한다
-	validate := validator.New()
+	validate := NewValidate()
 
 	t.Run("Recipient 객체를 규칙에 맞게 생성했을 때 Validation에 성공해야 한다", func(t *testing.T) {
 		recipient := Recipient{
@@ -56,7 +56,7 @@ func TestRecipientSchema(t *testing.T) {
 
 // TextMessage 스키마를 테스트한다.
 func TestTextMessageSchema(t *testing.T) {
-	validate := validator.New()
+	validate := NewValidate()
 	// 공용으로 사용할 recipient 객체를 생성한다.
 	recipient := Recipient{
 		RecipientNo: "01000000000",
@@ -74,6 +74,42 @@ func TestTextMessageSchema(t *testing.T) {
 		}
 		terr := validate.Struct(textMessage)
 		assert.Nil(t, terr)
+	})
+
+	t.Run("sms 타입은 Body의 최대 길이가 256이다", func(t *testing.T) {
+		bodyText := make([]rune, 257)
+		for i := range bodyText {
+			bodyText[i] = rune(65) // A
+		}
+		textMessage := TextMessage{
+			Type:          "sms",
+			Body:          string(bodyText),
+			RecipientList: []Recipient{recipient},
+			SendNo:        "0700000000",
+		}
+		errs := validate.Struct(textMessage)
+		assert.Error(t, errs)
+		for _, err := range errs.(validator.ValidationErrors) {
+			assert.Equal(t, "Body", err.Field())
+		}
+	})
+
+	t.Run("mms 타입은 Title이 필수이다", func(t *testing.T) {
+		bodyText := make([]rune, 257)
+		for i := range bodyText {
+			bodyText[i] = rune(65) // A
+		}
+		textMessage := TextMessage{
+			Type:          "mms",
+			Body:          string(bodyText),
+			RecipientList: []Recipient{recipient},
+			SendNo:        "0700000000",
+		}
+		errs := validate.Struct(textMessage)
+		assert.Error(t, errs)
+		for _, err := range errs.(validator.ValidationErrors) {
+			assert.Equal(t, "Title", err.Field())
+		}
 	})
 
 	t.Run("Request Date는 yyyy-mm-dd HH:MM 형식에 맞지 않으면 Validation 실패한다", func(t *testing.T) {
@@ -127,7 +163,7 @@ func TestTextMessageSchema(t *testing.T) {
 }
 
 func TestResultQuerySchema(t *testing.T) {
-	validate := validator.New()
+	validate := NewValidate()
 
 	t.Run("RequestId 또는 StartRequestDate + EndRequestDate 또는 StartCreateDate + EndCreateDate는 필수이다", func(t *testing.T) {
 		// Request Id로 요청 가능하다

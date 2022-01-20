@@ -27,7 +27,7 @@ type TextMessage struct {
 	Type              string      `json:"-" validate:"required,oneof=sms mms"`
 	TemplateId        string      `json:"templateId" validate:"max=50,required_without=Body"`
 	Title             string      `json:"title" validate:"max=120"`
-	Body              string      `json:"body" validate:"max=255,required_without=TemplateId"`
+	Body              string      `json:"body" validate:"max=4000,required_without=TemplateId"`
 	SendNo            string      `json:"sendNo" validate:"max=13,required"`
 	RequestDate       string      `json:"requestDate" validate:"omitempty,datetime=2006-01-02 15:04"`
 	SenderGroupingKey string      `json:"senderGroupingKey" validate:"max=100"`
