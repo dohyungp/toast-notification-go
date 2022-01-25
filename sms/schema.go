@@ -62,11 +62,11 @@ type SendResponse struct {
 
 // 결과 조회를 위한 Request Body이다.
 type ResultQuery struct {
-	RequestId            string              `json:"requestId" validate:"max=25,required_without_all=StartRequestDate StartCreateDate"`
-	StartRequestDate     string              `json:"startRequestDate" validate:"required_without_all=RequestId StartCreateDate,required_with=EndRequestDate,omitempty,datetime=2006-01-02 15:04:05"`
-	EndRequestDate       string              `json:"endRequestDate" validate:"required_without_all=RequestId StartCreateDate,required_with=StartRequestDate,omitempty,datetime=2006-01-02 15:04:05"`
-	StartCreateDate      string              `json:"startCreateDate" validate:"required_without_all=RequestId StartRequestDate,required_with=EndCreateDate,omitempty,datetime=2006-01-02 15:04:05"`
-	EndCreateDate        string              `json:"endCreateDate" validate:"required_without_all=RequestId StartRequestDate,required_with=StartCreateDate,omitempty,datetime=2006-01-02 15:04:05"`
+	RequestId            string              `json:"requestId" validate:"max=25"`
+	StartRequestDate     string              `json:"startRequestDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
+	EndRequestDate       string              `json:"endRequestDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
+	StartCreateDate      string              `json:"startCreateDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
+	EndCreateDate        string              `json:"endCreateDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
 	StartResultDate      string              `json:"startResultDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
 	EndResultDate        string              `json:"endResultDate" validate:"omitempty,datetime=2006-01-02 15:04:05"`
 	SendNo               string              `json:"sendNo" validate:"max=13"`
